@@ -14,7 +14,7 @@
 
 const long SERIAL_BAUD = 115200;
 const int SENSOR_INTERVAL_MILLIS = 60000;
-const char INSERT_SQL[] = "INSERT INTO `sensor`.`BME280` (`sensorid`, `timestamp`, `humidity`, `pressure`, `temperature`) VALUES ('%d', CURRENT_TIMESTAMP, '%d', '%d', '%ld');";
+const char INSERT_SQL[] = "INSERT INTO `sensor`.`BME280` (`sensorid`, `timestamp`, `humidity`, `pressure`, `temperature`) VALUES ('%d', CURRENT_TIMESTAMP, '%d', '%d', '%d');";
 
 #include "secrets.h"
 #ifndef SECRETS_H
@@ -49,7 +49,12 @@ char query[200];
 /*
  * BME280
  */
-uint32_t sensorID = ESP.getChipId();
+
+#if defined(ESP8266)
+  uint32_t sensorID = ESP.getChipId();
+#elif defined(ESP32)
+ 	uint32_t sensorID = ESP.getEfuseMac() & 0xffffff;
+#endif
 
 BME280I2C::Settings settings(
 	BME280::OSR_X1,
@@ -178,7 +183,7 @@ void loop()
 
 				uint32_t hum100  = (uint32_t)(hum * 100);
 				uint32_t pres100 = (uint32_t)(pres * 100);
-				sint32_t temp100 = (sint32_t)(temp * 100);
+				int32_t temp100 = (int32_t)(temp * 100);
 				sprintf(query, INSERT_SQL, sensorID, hum100, pres100, temp100);
 				Serial.printf("Query %s\n", query);
 				cursor->execute(query);

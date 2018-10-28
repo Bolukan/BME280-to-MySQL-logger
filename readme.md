@@ -5,7 +5,7 @@ This is a proof-of-concept for logging sensor data directly to a database withou
 
 ## Requirements
 * ESP8266 (D1 mini)  
-An ESP8266 or ESP32  
+An ESP8266 ~~or ESP32~~
 
 * BME280 I2C  
 
